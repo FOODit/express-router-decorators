@@ -10,4 +10,5 @@ export {
   BodyParsed,
   Authenticated,
   Response,
+  UseType
 } from './lib';

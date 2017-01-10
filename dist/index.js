@@ -11,3 +11,4 @@ exports.Options = lib_1.Options;
 exports.BodyParsed = lib_1.BodyParsed;
 exports.Authenticated = lib_1.Authenticated;
 exports.Response = lib_1.Response;
+exports.UseType = lib_1.UseType;
