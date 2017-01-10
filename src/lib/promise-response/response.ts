@@ -22,8 +22,8 @@ export class Response {
     return new Response(responseCode || 200, body);
   }
 
-  public static reject(error?: ResponseBody | number, responseCode?: number): Promise<Response> {
-    return Promise.reject<Response>(Response.error(error, responseCode));
+  public static reject<T>(error?: ResponseBody | number, responseCode?: number): Promise<T> {
+    return Promise.reject<T>(Response.error(error, responseCode));
   }
 
   public static resolve(body?: ResponseBody, responseCode?: number): Promise<Response> {

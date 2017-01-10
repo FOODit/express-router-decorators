@@ -51,6 +51,6 @@ export const Response: {
   resolve(responseCode?: number): Promise<Response>;
   resolve(body?: ResponseBody, responseCode?: number): Promise<Response>;
 
-  reject(responseCode?: number): Promise<Response>;
-  reject(error?: ResponseBody, responseCode?: number): Promise<Response>;
+  reject<T>(responseCode?: number): Promise<T>;
+  reject<T>(error?: ResponseBody, responseCode?: number): Promise<T>;
 };
