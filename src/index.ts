@@ -7,5 +7,7 @@ export {
   Patch,
   Delete,
   Options,
+  BodyParsed,
+  Authenticated,
   Response,
 } from './lib';
