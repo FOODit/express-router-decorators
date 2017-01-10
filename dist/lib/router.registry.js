@@ -29,7 +29,7 @@ class RouterRegistry {
             path,
             methodName
         };
-        annotations.endpoints.push({
+        annotations.endpoints.unshift({
             type: decorators_interfaces_1.EndpointDefinitionType.METHOD,
             definition: methodDefinition
         });
@@ -43,14 +43,14 @@ class RouterRegistry {
         if (path) {
             useDefinition.path = path;
         }
-        annotations.endpoints.push({
+        annotations.endpoints.unshift({
             type: decorators_interfaces_1.EndpointDefinitionType.USE,
             definition: useDefinition
         });
     }
     addMiddleware(clazz, methodOrPropertyName, middleware) {
         const annotations = this.getOrCreateAnnotations(clazz);
-        annotations.middleware.push({
+        annotations.middleware.unshift({
             propertyName: methodOrPropertyName,
             middleware
         });
