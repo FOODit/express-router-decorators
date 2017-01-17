@@ -1,12 +1,24 @@
 "use strict";
 const middleware_decorator_1 = require("../middleware.decorator");
 exports.authenticateWith = (isAuthenticated) => (req, res, next) => {
-    if (!isAuthenticated(req)) {
-        res.status(401).send('Unauthenticated');
-        res.end();
-        return;
+    const isAuthenticatedValue = isAuthenticated(req);
+    let isAuthenticatedPromise;
+    if (typeof isAuthenticatedValue === 'object' && typeof isAuthenticatedValue.then === 'function') {
+        isAuthenticatedPromise = isAuthenticatedValue;
     }
-    next();
+    else {
+        isAuthenticatedPromise = Promise.resolve(!!isAuthenticatedValue);
+    }
+    isAuthenticatedPromise.then((success) => {
+        if (success) {
+            next();
+        }
+        else {
+            res.status(401).send('Unauthenticated').end();
+        }
+    }).catch(() => {
+        res.status(401).send('Unauthenticated').end();
+    });
 };
 /**
  * Method decorator for authenticating a request. Will call the given callback, and if that returns false, will fail with 401.

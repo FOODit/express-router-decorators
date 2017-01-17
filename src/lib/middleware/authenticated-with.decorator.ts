@@ -2,14 +2,24 @@ import * as express from 'express';
 
 import {Middleware} from '../middleware.decorator';
 
-export const authenticateWith = (isAuthenticated: (req: express.Request) => boolean): express.RequestHandler =>
+export const authenticateWith = (isAuthenticated: (req: express.Request) => boolean | Promise<boolean>): express.RequestHandler =>
   (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-    if (!isAuthenticated(req)) {
-      res.status(401).send('Unauthenticated');
-      res.end();
-      return;
+    const isAuthenticatedValue = isAuthenticated(req);
+    let isAuthenticatedPromise: Promise<boolean>;
+    if (typeof isAuthenticatedValue === 'object' && typeof isAuthenticatedValue.then === 'function') {
+      isAuthenticatedPromise = isAuthenticatedValue;
+    } else {
+      isAuthenticatedPromise = Promise.resolve(!!isAuthenticatedValue);
     }
-    next();
+    isAuthenticatedPromise.then((success: boolean) => {
+      if (success) {
+        next();
+      } else {
+        res.status(401).send('Unauthenticated').end();
+      }
+    }).catch(() => {
+      res.status(401).send('Unauthenticated').end();
+    });
   };
 
 /**
@@ -22,6 +32,6 @@ export const authenticateWith = (isAuthenticated: (req: express.Request) => bool
  *   }
  * </code></pre>
  */
-export function AuthenticatedWith(isAuthenticated: (req: express.Request) => boolean): MethodDecorator & PropertyDecorator {
+export function AuthenticatedWith(isAuthenticated: (req: express.Request) => boolean | Promise<boolean>): MethodDecorator & PropertyDecorator {
   return Middleware(authenticateWith(isAuthenticated));
 }
