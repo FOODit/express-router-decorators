@@ -3,9 +3,9 @@ import * as sinon from 'sinon';
 
 import {matchClass} from '../../util';
 import {RouterRegistry} from '../../../lib/router.registry';
-import {Authenticated, authenticate} from '../../../lib/middleware/authenticated.decorator';
+import {AuthenticatedWith, authenticateWith} from '../../../lib/middleware/authenticated-with.decorator';
 
-describe('@Authenticated decorator', () => {
+describe('@AuthenticatedWith decorator', () => {
   let registry: any,
     getInstanceStub: Sinon.SinonStub;
 
@@ -23,22 +23,24 @@ describe('@Authenticated decorator', () => {
   it('should add an entry to the registry when added to a method', () => {
     class ClassWithParsedMethods {
 
-      @Authenticated()
+      @AuthenticatedWith(null)
       public parsedMethod(): void {
       }
     }
 
     expect(registry.addMiddleware).to.have.been.calledOnce;
-    expect(registry.addMiddleware).to.have.been.calledWithExactly(matchClass('ClassWithParsedMethods'), 'parsedMethod', authenticate);
+    expect(registry.addMiddleware).to.have.been.calledWithExactly(matchClass('ClassWithParsedMethods'), 'parsedMethod', authenticateWith);
   });
 
   it('should add an entry to the registry when added to a property', () => {
     class ClassWithParsedProperties {
-      @Authenticated()
+      @AuthenticatedWith(null)
       public parsedProperty: any;
     }
 
     expect(registry.addMiddleware).to.have.been.calledOnce;
-    expect(registry.addMiddleware).to.have.been.calledWithExactly(matchClass('ClassWithParsedProperties'), 'parsedProperty', authenticate);
+    expect(registry.addMiddleware).to.have.been.calledWithExactly(matchClass('ClassWithParsedProperties'), 'parsedProperty', authenticateWith);
   });
+
+  // TODO tests that it throws 401 on failed auth
 });

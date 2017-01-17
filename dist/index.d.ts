@@ -31,7 +31,7 @@ export function Options(path: PathArgument): MethodDecorator;
 
 // Middleware
 export function Middleware(middleware: express.RequestHandler): MethodDecorator & PropertyDecorator;
-export function Authenticated(): MethodDecorator & PropertyDecorator;
+export function AuthenticatedWith(isAuthenticated: (req: express.Request) => boolean): MethodDecorator & PropertyDecorator;
 export function BodyParsed(): MethodDecorator & PropertyDecorator;
 
 type ResponseBody = string | {};

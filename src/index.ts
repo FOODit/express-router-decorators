@@ -8,7 +8,7 @@ export {
   Delete,
   Options,
   BodyParsed,
-  Authenticated,
+  AuthenticatedWith,
   Response,
   UseType
 } from './lib';
