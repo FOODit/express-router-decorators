@@ -36,7 +36,8 @@ describe('PromiseResponseWrapper', () => {
 
   beforeEach(() => {
     log = {
-      warn: sinon.stub()
+      warn: sinon.stub(),
+      error: sinon.stub()
     };
     handler = sinon.stub();
     req = { url: 'incoming' }; // Content is irrelevant, this is a placeholder
@@ -162,15 +163,37 @@ describe('PromiseResponseWrapper', () => {
       });
   });
 
-  it('should log a warning and return 500 if the response is a promise with a non-Response object', () => {
+  it('should log an error with the original URL and return 500 if the response is a failed promise with a non-Response error', () => {
     const error = new Error('Something went wrong');
     handler.returns(Promise.reject(error));
+    const url = '/foo/bar';
+    req.originalUrl = url;
 
     middleware(req, res, next);
 
     return waitForResponseEnd()
       .then(() => {
-        expect(log.warn).to.have.been.called;
+        expect(log.error).to.have.been.calledOnce;
+        expect(log.error.firstCall.args).to.contain(url);
+        expect(log.error.firstCall.args).to.contain(error);
+        expect(res.status).to.have.been.calledWithExactly(500);
+        expectNoContentToHaveBeenSent();
+      });
+  });
+
+  it('should log an error with the original URL and return 500 if the handler itself throws an error', () => {
+    const error = new Error('Something went wrong');
+    handler.throws(error);
+    const url = '/foo/bar';
+    req.originalUrl = url;
+
+    middleware(req, res, next);
+
+    return waitForResponseEnd()
+      .then(() => {
+        expect(log.error).to.have.been.calledOnce;
+        expect(log.error.firstCall.args).to.contain(url);
+        expect(log.error.firstCall.args).to.contain(error);
         expect(res.status).to.have.been.calledWithExactly(500);
         expectNoContentToHaveBeenSent();
       });

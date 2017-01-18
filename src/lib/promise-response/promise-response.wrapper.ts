@@ -24,7 +24,13 @@ export class PromiseResponseWrapper {
 
   public wrap(handler: express.RequestHandler): express.RequestHandler {
     return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-      let result = handler(req, res, next); // Because this is a middleware, not a handler, we pass `next()` in. We will never call it ourselves.
+      let result;
+      try {
+        result = handler(req, res, next); // Because this is a middleware, not a handler, we pass `next()` in. We will never call it ourselves.
+      } catch (err) {
+        this.log.error('Uncaught error', req.originalUrl, err);
+        res.status(500).end();
+      }
       if (!this.isPromise(result)) {
         // If the handler does not return a promise, we assume that it has handled the request successfully.
         return;
@@ -42,7 +48,7 @@ export class PromiseResponseWrapper {
           if (err instanceof Response) {
             this.sendResponse(res, err);
           } else {
-            this.log.warn('Uncaught error:', err);
+            this.log.error('Uncaught error', req.originalUrl, err);
             res.status(500).end();
           }
         });

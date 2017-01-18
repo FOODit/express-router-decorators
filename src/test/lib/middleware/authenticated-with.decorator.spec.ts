@@ -20,7 +20,7 @@ describe('@AuthenticatedWith decorator', () => {
 
   afterEach(() => getInstanceStub.restore());
 
-  it('should add an entry to the registry when added to a method', () => {
+  it.skip('should add an entry to the registry when added to a method', () => {
     class ClassWithParsedMethods {
 
       @AuthenticatedWith(null)
@@ -32,7 +32,7 @@ describe('@AuthenticatedWith decorator', () => {
     expect(registry.addMiddleware).to.have.been.calledWithExactly(matchClass('ClassWithParsedMethods'), 'parsedMethod', authenticateWith);
   });
 
-  it('should add an entry to the registry when added to a property', () => {
+  it.skip('should add an entry to the registry when added to a property', () => {
     class ClassWithParsedProperties {
       @AuthenticatedWith(null)
       public parsedProperty: any;
